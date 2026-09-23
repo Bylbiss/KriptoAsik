@@ -51,11 +51,11 @@ with st.sidebar:
     menu = st.radio(
         "Pilih Algoritma:",
         [
-            "> **Caesar Cipher**",
-            "> **Rail Fence Cipher**",
-            "> **Vernam Cipher (OTP)**",
-            "> **Blowfish Cipher**",
-            "> **Super Enkripsi**"
+            "**Caesar Cipher**",
+            "**Rail Fence Cipher**",
+            "**Vernam Cipher (OTP)**",
+            "**Blowfish Cipher**",
+            "**Super Enkripsi**"
         ]
     )
     
@@ -106,15 +106,38 @@ if menu != "> **Super Enkripsi**":
             if "Caesar" in menu:
                 result, logs = caesar.process(text_input, key_input, mode)
             elif "Rail Fence" in menu:
-                result, logs = rail_fence.process(text_input, key_input, mode)
+                result, process_data = rail_fence.process(text_input, key_input, mode)
             elif "Vernam" in menu:
                 result, logs = vernam.process(text_input, key_input, mode)
             elif "Blowfish" in menu:
                 result, logs = blowfish.process(text_input, key_input, mode)
 
             st.markdown('<div class="process-box">', unsafe_allow_html=True)
-            for log in logs:
-                st.write(log)
+            
+            if "Rail Fence" in menu:
+                # Tampilkan intro
+                st.write(process_data["intro"])
+                st.markdown("---")
+                
+                # Tampilkan setiap step dalam expander
+                for i, step in enumerate(process_data["steps"], 1):
+                    with st.expander(f"▶ {step['title']}", expanded=(i==1)):
+                        if step['description']:
+                            st.write(f"*{step['description']}*")
+                            st.markdown("---")
+                        
+                        if step['grid'] is not None:
+                            st.dataframe(step['grid'], use_container_width=True)
+                            st.markdown("---")
+                        
+                        if step['content']:
+                            for content in step['content']:
+                                st.write(content)
+            else:
+                # Untuk algoritma lain (Caesar, Vernam, Blowfish)
+                for log in logs:
+                    st.write(log)
+            
             st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.info("Tekan tombol proses untuk melihat visualisasi proses.")
