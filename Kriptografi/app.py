@@ -151,8 +151,8 @@ else:
     st.subheader("🔗 Form Super Enkripsi")
     
     text_input = st.text_area(
-        "Input Teks Utama (Plaintext / Ciphertext):",
-        placeholder="Masukkan pesan utama yang ingin di-super enkripsi...",
+        f"Utama — {input_label}",
+        placeholder=input_placeholder,
         height=100
     )
     
