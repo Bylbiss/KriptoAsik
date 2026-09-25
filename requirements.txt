@@ -1,0 +1,13 @@
+# Core web framework
+streamlit>=1.28.0
+
+# Data manipulation and visualization
+pandas>=2.0.0
+
+# Cryptography libraries
+pycryptodome>=3.19.0
+
+# Standard library modules (included with Python)
+# - hashlib (built-in)
+# - datetime (built-in)
+# - base64 (built-in)

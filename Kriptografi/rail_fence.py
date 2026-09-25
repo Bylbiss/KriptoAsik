@@ -1,3 +1,5 @@
+import pandas as pd
+
 def encrypt(text, rails):
     """
     Enkripsi teks menggunakan Rail Fence Cipher.
@@ -110,7 +112,6 @@ def create_grid_visualization(text, rails, mode="display"):
     Returns:
         DataFrame grid
     """
-    import pandas as pd
     
     text = text.replace(" ", "").upper()
     text_len = len(text)
