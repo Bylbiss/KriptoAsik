@@ -1,12 +1,13 @@
 def process(text, key, mode):
     """
     Modul Pemroses Vernam Cipher / One-Time Pad (OTP)
+    Diformat dengan Code Block agar sejajar dan rapi di Streamlit.
     """
     logs = []
     
     # Validasi input kunci
     if not key:
-        return "Error: Kunci tidak boleh kosong!", ["KUNCI TIDAK BOLEH KOSONG! Masukkan kunci teks."]
+        return "Error: Kunci tidak boleh kosong!", ["⚠️ KUNCI TIDAK BOLEH KOSONG! Masukkan kunci teks."]
 
     logs.append(f"**MODE {mode.upper()}** | Vernam Cipher (One-Time Pad)")
     
@@ -16,8 +17,8 @@ def process(text, key, mode):
         logs.append("*Catatan: Panjang kunci lebih pendek dari teks, kunci otomatis diulang.*")
         
     logs.append(f"Kunci yang dipakai : {extended_key}")
-    logs.append("Rumus              : Nilai ASCII Teks XOR (^) Nilai ASCII Kunci\n")
-    logs.append("--- **LANGKAH DEMI LANGKAH (XOR ASCII)** ---")
+    logs.append("Rumus Operasi      : Nilai Biner Teks XOR (^) Nilai Biner Kunci\n")
+    logs.append("--- **LANGKAH DEMI LANGKAH (OPERASI XOR BINER)** ---")
 
     result_chars = []
 
@@ -26,45 +27,71 @@ def process(text, key, mode):
             p = text[i]
             k = extended_key[i]
             
-            # Operasi XOR berbasis nilai ASCII
-            xor_val = ord(p) ^ ord(k)
+            p_ascii = ord(p)
+            k_ascii = ord(k)
+            
+            p_bin = f"{p_ascii:08b}"
+            k_bin = f"{k_ascii:08b}"
+            
+            xor_val = p_ascii ^ k_ascii
+            xor_bin = f"{xor_val:08b}"
             hex_val = f"{xor_val:02X}" 
             
             result_chars.append(hex_val)
-            logs.append(
-                f"Langkah {i+1}: '{p}' (ASCII: {ord(p)}) XOR '{k}' (ASCII: {ord(k)}) "
-                f"->Desimal: {xor_val} (Hex: {hex_val})"
+            
+            # Format blok monospaced yang sejajar dan rapi
+            block = (
+                f"```text\n"
+                f"Langkah {i+1}:\n"
+                f"  Teks  : '{p}' (ASCII: {p_ascii:3d}) -> Biner: {p_bin}\n"
+                f"  Kunci : '{k}' (ASCII: {k_ascii:3d}) -> Biner: {k_bin}\n"
+                f"  --------------------------------------- (XOR)\n"
+                f"  Hasil : Hex {hex_val} (ASCII: {xor_val:3d}) -> Biner: {xor_bin}\n"
+                f"```"
             )
+            logs.append(block)
         
-        # Format keluaran dipisah spasi agar mudah dibaca/disalin
         final_result = " ".join(result_chars)
 
     else:
-        # MODE DEKRIPSI (Menerima input berupa blok Hex, contoh: 1A 2B 3C)
+        # MODE DEKRIPSI 
         hex_blocks = text.split()
         for i, h in enumerate(hex_blocks):
             if i >= len(extended_key):
                 break
             
             k = extended_key[i]
+            k_ascii = ord(k)
+            k_bin = f"{k_ascii:08b}"
+            
             try:
                 c_val = int(h, 16)
-                p_val = c_val ^ ord(k)
+                c_bin = f"{c_val:08b}"
+                
+                p_val = c_val ^ k_ascii
+                p_bin = f"{p_val:08b}"
                 p_char = chr(p_val)
                 
                 result_chars.append(p_char)
-                logs.append(
-                    f"Langkah {i+1}: Hex {h} ({c_val}) XOR '{k}' ({ord(k)}) "
-                    f"-> {p_val} (Karakter: '{p_char}')"
+                
+                block = (
+                    f"```text\n"
+                    f"Langkah {i+1}:\n"
+                    f"  Cipher: Hex {h} (Desimal: {c_val:3d}) -> Biner: {c_bin}\n"
+                    f"  Kunci : '{k}'    (ASCII:   {k_ascii:3d}) -> Biner: {k_bin}\n"
+                    f"  ------------------------------------------- (XOR)\n"
+                    f"  Hasil : '{p_char}'   (ASCII:   {p_val:3d}) -> Biner: {p_bin}\n"
+                    f"```"
                 )
+                logs.append(block)
             except ValueError:
                 result_chars.append("?")
-                logs.append(f"Langkah {i+1}: Hex '{h}' tidak valid!")
+                logs.append(f"⚠️ **Langkah {i+1}: Hex '{h}' tidak valid!**")
                 
         final_result = "".join(result_chars)
 
     logs.append("\n--- **PROSES SELESAI** ---")
-    logs.append(f"Teks Input : {text}")
-    logs.append(f"Teks Hasil : {final_result}")
+    logs.append(f"Teks Input  : `{text}`")
+    logs.append(f"Teks Hasil  : `{final_result}`")
 
     return final_result, logs
