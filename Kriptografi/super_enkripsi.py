@@ -109,7 +109,7 @@ def _rail_fence_stage(current_text, k_rail, mode):
         logs.append(f"3. Decode byte UTF-8 menjadi teks: `{hasil_akhir}`")
         return hasil_akhir, logs
     except (ValueError, UnicodeDecodeError) as e:
-        logs.append(f"⚠️ Gagal mengonversi HEX kembali ke teks: {e}")
+        logs.append(f"Gagal mengonversi HEX kembali ke teks: {e}")
         return f"Error: Gagal konversi HEX pada tahap Rail Fence ({e})", logs
 
 
@@ -119,10 +119,10 @@ def process(text, user_key, algo_order, mode):
     urutan algoritma bebas ditentukan pengguna (algo_order).
     """
     if not user_key:
-        return "Error: Kunci tidak boleh kosong!", ["⚠️ KUNCI UTAMA TIDAK BOLEH KOSONG!"]
+        return "Error: Kunci tidak boleh kosong!", ["Kunci utama tidak boleh kosong."]
 
     if not algo_order:
-        return "Error: Pilih minimal 1 algoritma!", ["⚠️ PILIH MINIMAL 1 ALGORITMA UNTUK DIPROSES!"]
+        return "Error: Pilih minimal 1 algoritma!", ["Pilih minimal satu algoritma untuk diproses."]
 
     # Derivasi Kunci Utama
     k_caesar, k_rail, k_vernam, k_blowfish = derive_keys(user_key)
@@ -130,7 +130,7 @@ def process(text, user_key, algo_order, mode):
     all_logs = []
     current_text = text
 
-    all_logs.append(f"**SUPER-ENKRIPSI ({mode.upper()})**")
+    all_logs.append(f"**Super Enkripsi ({mode})**")
     all_logs.append(f"• Kunci Utama User : `{user_key}`")
     all_logs.append("• Derivasi Kunci   :")
     all_logs.append(f"  - Caesar Key     : {k_caesar}")
@@ -143,8 +143,8 @@ def process(text, user_key, algo_order, mode):
     all_logs.append(f"• Urutan Eksekusi  : {' -> '.join(execution_order)}\n")
 
     for step, algo in enumerate(execution_order, start=1):
-        all_logs.append(f"--- **TAHAP {step}: {algo.upper()} CIPHER ({mode.upper()})** ---")
-        all_logs.append(f"Input Tahap Ini : `{current_text}`")
+        all_logs.append(f"--- **Tahap {step}: {algo} ({mode})** ---")
+        all_logs.append(f"Input tahap ini: `{current_text}`")
 
         if algo == "Caesar":
             current_text, logs = caesar.process(current_text, k_caesar, mode)
@@ -157,21 +157,21 @@ def process(text, user_key, algo_order, mode):
             # logs-nya, jadi cukup diteruskan apa adanya.
             current_text, logs = blowfish.process(current_text, k_blowfish, mode)
         else:
-            logs = [f"⚠️ Algoritma '{algo}' tidak dikenali!"]
+            logs = [f"Algoritma '{algo}' tidak dikenali."]
 
         all_logs.extend(logs)
-        all_logs.append(f"Output Tahap {step} : `{current_text}`\n")
+        all_logs.append(f"Output tahap {step}: `{current_text}`\n")
 
         # Hentikan rantai lebih awal jika satu tahap gagal, supaya pesan
         # error tidak ikut "dienkripsi" oleh tahap berikutnya seolah data
         # yang valid (bug yang pernah terjadi sebelumnya).
         if _is_error(current_text):
             all_logs.append(
-                f"❌ **PROSES DIHENTIKAN** pada Tahap {step} ({algo}) karena terjadi error di atas."
+                f"**Proses dihentikan** pada tahap {step} ({algo}) karena terjadi error di atas."
             )
             return current_text, all_logs
 
-    all_logs.append("--- **PROSES SUPER-ENKRIPSI SELESAI** ---")
+    all_logs.append("--- **Proses super enkripsi selesai** ---")
     all_logs.append(f"Teks Awal  : `{text}`")
     all_logs.append(f"Hasil Akhir: `{current_text}`")
 

@@ -7,7 +7,7 @@ def process(text, key, mode):
     
     # Validasi input kunci
     if not key:
-        return "Error: Kunci tidak boleh kosong!", ["⚠️ KUNCI TIDAK BOLEH KOSONG! Masukkan kunci teks."]
+        return "Error: Kunci tidak boleh kosong!", ["Kunci tidak boleh kosong. Masukkan kunci teks."]
 
     if mode == "Dekripsi":
         if any(char.isspace() for char in text):
@@ -16,7 +16,7 @@ def process(text, key, mode):
             compact_text = text.strip()
             if len(compact_text) % 2:
                 return "Error: Ciphertext HEX tidak lengkap!", [
-                    "⚠️ Ciphertext tanpa spasi harus berisi pasangan HEX lengkap (2 digit per blok)."
+                    "Ciphertext tanpa spasi harus berisi pasangan HEX lengkap (2 digit per blok)."
                 ]
             hex_blocks = [
                 compact_text[index:index + 2]
@@ -111,7 +111,7 @@ def process(text, key, mode):
                 logs.append(block)
             except ValueError:
                 result_chars.append("?")
-                logs.append(f"⚠️ **Langkah {i+1}: Hex '{h}' tidak valid!**")
+                logs.append(f"**Langkah {i+1}: Hex '{h}' tidak valid.**")
                 
         final_result = "".join(result_chars)
 

@@ -257,9 +257,9 @@ def _css():
     return """
 <style>
 .bf-step {
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 8px;
+    background: var(--surface, #202722);
+    border: 1px solid var(--line, #3a463e);
+    border-radius: 5px;
     margin: 10px 0;
     overflow: hidden;
 }
@@ -268,22 +268,22 @@ def _css():
     cursor: pointer;
     padding: 14px 16px;
     font-weight: 700;
-    color: #ffffff;
-    background: #1d232c;
+    color: var(--text, #e9efeb);
+    background: var(--surface-raised, #29322c);
     user-select: none;
 }
 
 .bf-step summary:hover {
-    background: #252c36;
+    background: #313b34;
 }
 
 .bf-body {
     padding: 14px 16px 18px 16px;
-    color: #e6edf3;
+    color: var(--text, #e9efeb);
 }
 
 .bf-desc {
-    color: #b8c0cc;
+    color: var(--muted, #a5b0a8);
     margin-bottom: 12px;
     line-height: 1.6;
 }
@@ -305,23 +305,23 @@ def _css():
 }
 
 .bf-table th {
-    background: #21262d;
-    color: #ffffff;
+    background: var(--surface-raised, #29322c);
+    color: var(--text, #e9efeb);
     padding: 8px;
-    border: 1px solid #30363d;
+    border: 1px solid var(--line, #3a463e);
     text-align: left;
     white-space: nowrap;
 }
 
 .bf-table td {
     padding: 8px;
-    border: 1px solid #30363d;
+    border: 1px solid var(--line, #3a463e);
     white-space: nowrap;
 }
 
 .bf-formula {
-    background: #0d1117;
-    border-left: 3px solid #58a6ff;
+    background: var(--app-bg, #151a17);
+    border-left: 3px solid var(--accent, #47a879);
     padding: 10px 12px;
     margin: 10px 0;
     font-family: monospace;
@@ -329,15 +329,15 @@ def _css():
 }
 
 .bf-result {
-    background: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 6px;
+    background: var(--app-bg, #151a17);
+    border: 1px solid var(--line, #3a463e);
+    border-radius: 4px;
     padding: 12px;
     margin-top: 10px;
 }
 
 .bf-note {
-    color: #8b949e;
+    color: var(--muted, #a5b0a8);
     font-size: 0.9em;
 }
 </style>
@@ -349,7 +349,7 @@ def process(text: str, key: str, mode: str):
 
     if not 4 <= len(key_bytes) <= 56:
         error = (
-            "❌ **Kunci Blowfish tidak valid.** "
+            "**Kunci Blowfish tidak valid.** "
             "Panjang kunci harus 4–56 byte "
             "(32–448 bit)."
         )
@@ -357,7 +357,7 @@ def process(text: str, key: str, mode: str):
         return "Error: Kunci Tidak Valid!", [
             _css(),
             _details(
-                "❌ Validasi Kunci",
+                "Validasi kunci",
                 "Blowfish menerima kunci 4 sampai 56 byte.",
                 f"<b>Kunci saat ini:</b> {html.escape(key)}",
             ),
@@ -368,7 +368,7 @@ def process(text: str, key: str, mode: str):
     except Exception as e:
         return "Gagal!", [
             _css(),
-            _details("❌ Key Expansion Gagal", content=html.escape(str(e))),
+            _details("Ekspansi kunci gagal", content=html.escape(str(e))),
         ]
 
     # ENKRIPSI
@@ -434,7 +434,7 @@ def process(text: str, key: str, mode: str):
 
             logs.append(
                 _details(
-                    "📌 INFORMASI INPUT",
+                    "Informasi input",
                     "Data yang akan diproses oleh Blowfish.",
                     f"""
                     <b>Plaintext:</b> <code>{html.escape(text)}</code><br>
@@ -449,7 +449,7 @@ def process(text: str, key: str, mode: str):
 
             logs.append(
                 _details(
-                    "📦 STEP 1 — Plaintext → Byte → Blok 64-bit",
+                    "Langkah 1 — Plaintext ke byte ke blok 64-bit",
                     (
                         f"Plaintext diubah menjadi UTF-8, kemudian "
                         f"ditambahkan PKCS7 padding sebanyak "
@@ -471,7 +471,7 @@ def process(text: str, key: str, mode: str):
 
             logs.append(
                 _details(
-                    "🔑 STEP 2 — XOR Key dengan P-Array Awal",
+                    "Langkah 2 — XOR kunci dengan P-Array awal",
                     (
                         "Setiap word 32-bit pada P-Array di-XOR "
                         "dengan potongan key secara berulang."
@@ -487,7 +487,7 @@ def process(text: str, key: str, mode: str):
 
             logs.append(
                 _details(
-                    "⚙️ STEP 3 — Key Expansion P-Array & S-Box",
+                    "Langkah 3 — Ekspansi kunci P-Array dan S-Box",
                     (
                         "Blowfish mengenkripsi blok nol secara berulang "
                         "untuk membentuk P-Array final dan kemudian "
@@ -556,7 +556,7 @@ def process(text: str, key: str, mode: str):
 
             logs.append(
                 _details(
-                    "🔐 STEP 5 — Final Whitening & Ciphertext",
+                    "Langkah 5 — Final whitening dan ciphertext",
                     (
                         "Setelah Round 16, dilakukan pembalikan swap "
                         "terakhir dan XOR dengan P17 serta P18."
@@ -577,7 +577,7 @@ def process(text: str, key: str, mode: str):
         except Exception as e:
             return "Gagal Enkripsi!", [
                 _css(),
-                _details("❌ Enkripsi Gagal", content=html.escape(str(e))),
+                _details("Enkripsi gagal", content=html.escape(str(e))),
             ]
 
     # MODE DEKRIPSI
@@ -613,7 +613,7 @@ def process(text: str, key: str, mode: str):
             # INFORMASI INPUT
             logs.append(
                 _details(
-                    "🔓 INFORMASI DEKRIPSI",
+                    "Informasi dekripsi",
                     ("Informasi dasar ciphertext dan kunci yang digunakan."),
                     f"""
                     <b>Ciphertext Base64:</b> <code>{html.escape(ciphertext_b64)}</code> <br>
@@ -682,7 +682,7 @@ def process(text: str, key: str, mode: str):
 
             logs.append(
                 _details(
-                    "🔑 STEP 2 — Key Expansion",
+                    "Langkah 2 — Ekspansi kunci",
                     (
                         "Kunci yang sama seperti saat enkripsi "
                         "digunakan untuk membentuk P-Array dan "
@@ -854,7 +854,7 @@ def process(text: str, key: str, mode: str):
 
             logs.append(
                 _details(
-                    "📝 STEP 5 — Byte → UTF-8 → Plaintext",
+                    "Langkah 5 — Byte ke UTF-8 ke plaintext",
                     (
                         "Data hasil dekripsi yang telah "
                         "dihapus padding-nya dikonversi "
@@ -874,7 +874,7 @@ def process(text: str, key: str, mode: str):
             # HASIL AKHIR
             logs.append(
                 _details(
-                    "✅ HASIL AKHIR DEKRIPSI",
+                    "Hasil akhir dekripsi",
                     "Dekripsi Blowfish berhasil.",
                     f"""
                     <b>Ciphertext: <code>{html.escape(ciphertext_b64)}</code> </b>
@@ -892,7 +892,7 @@ def process(text: str, key: str, mode: str):
             return "Gagal Dekripsi!", [
                 _css(),
                 _details(
-                    "❌ Dekripsi Gagal",
+                    "Dekripsi gagal",
                     "Terjadi kesalahan saat melakukan dekripsi.",
                     f"""
                     <b>Detail Error:</b>

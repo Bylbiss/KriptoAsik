@@ -2,68 +2,115 @@ import blowfish
 import caesar
 import rail_fence
 import streamlit as st
-from session_manager import session_manager
 import super_enkripsi
 import vernam
 
 # Konfig Halaman Streamlit
 st.set_page_config(
-    page_title="APLIKASI KRIPTOGRAFI", page_icon="🔐", layout="wide"
+    page_title="Kriptografi", layout="wide"
 )
 
 st.markdown(
     """
 <style>
+    :root {
+        --app-bg: #151a17;
+        --sidebar-bg: #191f1b;
+        --surface: #202722;
+        --surface-raised: #29322c;
+        --line: #3a463e;
+        --text: #e9efeb;
+        --muted: #a5b0a8;
+        --accent: #47a879;
+        --accent-soft: #20372a;
+        --accent-alt: #d1ad67;
+    }
+
     .stApp {
-        background-color: #0e1117;
-        color: #ffffff;
+        background: var(--app-bg);
+        color: var(--text);
+    }
+    [data-testid="stSidebar"] {
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--line);
     }
     .main-header {
-        font-family: 'Courier New', Courier, monospace;
-        background-color: #161b22;
-        padding: 10px 20px;
-        border-radius: 5px;
-        border: 1px solid #30363d;
-        margin-bottom: 20px;
+        padding: 0 0 14px;
+        margin-bottom: 22px;
+        border-bottom: 1px solid var(--line);
+        color: var(--text);
+        font-family: "Segoe UI", sans-serif;
+    }
+    .main-header h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
     }
     .process-box {
-        background-color: #161b22;
-        border: 1px dashed #30363d;
-        padding: 15px;
-        border-radius: 5px;
-        font-family: 'Courier New', Courier, monospace;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        padding: 16px;
+        border-radius: 6px;
     }
     .key-preview-box {
-        background-color: #161b22;
-        border: 1px solid #30363d;
-        border-left: 4px solid #58a6ff;
-        padding: 12px 15px;
-        border-radius: 5px;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 0.88em;
-        line-height: 1.9em;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-left: 3px solid var(--accent);
+        padding: 12px 14px;
+        border-radius: 4px;
+        line-height: 1.8;
     }
     .algo-chip {
         display: inline-block;
-        background-color: #238636;
-        color: #ffffff;
-        padding: 5px 12px;
-        border-radius: 15px;
+        background: var(--accent-soft);
+        color: #a9dfbf;
+        padding: 4px 9px;
+        border-radius: 4px;
         margin: 3px 0;
-        font-family: 'Courier New', Courier, monospace;
-        font-weight: bold;
-        font-size: 0.82em;
-        border: 1px solid #2ea043;
+        font-weight: 600;
+        font-size: 0.85em;
+        border: 1px solid #42644d;
     }
     .algo-chip-dec {
-        background-color: #8957e5;
-        border: 1px solid #a371f7;
+        background: #353126;
+        color: #e4cf9e;
+        border-color: #65583b;
     }
     .algo-arrow {
-        color: #58a6ff;
-        font-weight: bold;
-        margin: 0 6px;
+        color: var(--muted);
+        margin: 0 5px;
         font-size: 1em;
+    }
+    [data-testid="stExpander"] {
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--surface);
+    }
+    [data-testid="stTextArea"] textarea,
+    [data-testid="stTextInput"] input,
+    [data-testid="stNumberInput"] input {
+        background: var(--surface);
+        border-color: var(--line);
+        border-radius: 4px;
+    }
+    .stButton > button {
+        min-height: 2.5rem;
+        border-radius: 4px;
+        border-color: var(--line);
+        font-weight: 600;
+    }
+    .stButton > button[kind="primary"] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #101713;
+    }
+    .stButton > button[kind="primary"]:hover {
+        background: #59b989;
+        border-color: #59b989;
+        color: #101713;
+    }
+    [data-testid="stCode"] pre {
+        border: 1px solid var(--line);
+        border-radius: 4px;
     }
 </style>
 """,
@@ -74,7 +121,7 @@ st.markdown(
 st.markdown(
     """
 <div class="main-header">
-    <h3 style="margin:0; padding:0;">🔐 APLIKASI KRIPTOGRAFI</h3>
+    <h3 style="margin:0; padding:0;">Aplikasi Kriptografi</h3>
 </div>
 """,
     unsafe_allow_html=True,
@@ -82,7 +129,7 @@ st.markdown(
 
 # Sidebar
 with st.sidebar:
-    st.title("📌 MENU")
+    st.title("Menu")
 
     # Pilih Menu
     menu = st.radio(
@@ -94,14 +141,10 @@ with st.sidebar:
             "Blowfish Cipher",
             "Super Enkripsi",
         ],
-        format_func=lambda option: f"> **{option}**",
     )
 
     st.markdown("---")
-    session_manager.display_history_widget(show_limit=50)
-    st.markdown("---")
-
-    st.title("👥 NAMA ANGGOTA")
+    st.title("Anggota")
     st.write("- **Bylbiss El Haqqie** 123240003")
     st.write("- **Muhammad Restu Firmansyah** 123240050")
     st.write("- **Alifah Chairul Munawar** 123240234")
@@ -150,10 +193,10 @@ if menu != "Super Enkripsi":
         )
 
     # Tombol Eksekusi
-    btn_process = st.button(f"[ PROSES {mode.upper()} ]", type="primary")
+    btn_process = st.button(f"Proses {mode}", type="primary")
 
     st.markdown("---")
-    st.subheader("📊 PROSES DETAIL ALGORITMA")
+    st.subheader("Langkah proses")
 
     # Container Log Visualisasi Proses
     with st.container():
@@ -174,41 +217,30 @@ if menu != "Super Enkripsi":
             elif "Blowfish" in menu:
                 result, logs = blowfish.process(text_input, key_input, mode)
 
-            session_manager.add_to_history(
-                text=text_input,
-                algorithm=menu,
-                mode=mode,
-                key=str(key_input),
-                result=result,
-            )
-
-            st.markdown('<div class="process-box">', unsafe_allow_html=True)
-
-            if "Rail Fence" in menu:
-                st.write(process_data["intro"])
-                st.markdown("---")
-                for i, step in enumerate(process_data["steps"], 1):
-                    with st.expander(f"▶ {step['title']}", expanded=(i == 1)):
-                        if step["description"]:
-                            st.write(f"*{step['description']}*")
-                            st.markdown("---")
-                        if step["grid"] is not None:
-                            st.dataframe(step["grid"], width="stretch")
-                            st.markdown("---")
-                        if step["content"]:
-                            for content in step["content"]:
-                                st.write(content)
-            elif "Blowfish" in menu:
-                # Log Blowfish berisi blok HTML (<details>, style, dsb),
-                # jadi wajib unsafe_allow_html=True agar tidak muncul mentah.
-                for log in logs:
-                    st.markdown(log, unsafe_allow_html=True)
-            else:
-                # Caesar & Vernam: log berupa teks/markdown biasa
-                for log in logs:
-                    st.write(log)
-
-            st.markdown("</div>", unsafe_allow_html=True)
+            with st.container(border=True):
+                if "Rail Fence" in menu:
+                    st.write(process_data["intro"])
+                    st.markdown("---")
+                    for i, step in enumerate(process_data["steps"], 1):
+                        with st.expander(step["title"], expanded=(i == 1)):
+                            if step["description"]:
+                                st.write(f"*{step['description']}*")
+                                st.markdown("---")
+                            if step["grid"] is not None:
+                                st.dataframe(step["grid"], width="stretch")
+                                st.markdown("---")
+                            if step["content"]:
+                                for content in step["content"]:
+                                    st.write(content)
+                elif "Blowfish" in menu:
+                    # Log Blowfish berisi blok HTML (<details>, style, dsb),
+                    # jadi wajib unsafe_allow_html=True agar tidak muncul mentah.
+                    for log in logs:
+                        st.markdown(log, unsafe_allow_html=True)
+                else:
+                    # Caesar & Vernam: semua log berada di satu panel proses.
+                    for log in logs:
+                        st.write(log)
         else:
             st.info("Tekan tombol proses untuk melihat visualisasi proses.")
             result = "Hasil akan tampil di sini..."
@@ -218,9 +250,9 @@ if menu != "Super Enkripsi":
 
 # 2. Super Enkripsi
 else:
-    st.subheader("🔗 Form Super Enkripsi (Multi-Cipher)")
+    st.subheader("Super Enkripsi")
 
-    with st.expander("💡 Apa itu Super Enkripsi?", expanded=False):
+    with st.expander("Tentang Super Enkripsi", expanded=False):
         st.markdown(
             """
             **Super Enkripsi** menggabungkan 4 algoritma (Caesar, Rail Fence,
@@ -234,45 +266,18 @@ else:
             """
         )
 
-    input_source = st.radio(
-        "Pilih sumber input:",
-        ["Input Manual", "Pilih dari History"],
-        horizontal=True,
-        key="super_input_source",
+    text_input = st.text_area(
+        "Input Teks Utama (Plaintext / Ciphertext):",
+        placeholder="Masukkan pesan utama yang ingin di-super enkripsi...",
+        height=100,
     )
-
-    if input_source == "Input Manual":
-        text_input = st.text_area(
-            "Input Teks Utama (Plaintext / Ciphertext):",
-            placeholder="Masukkan pesan utama yang ingin di-super enkripsi...",
-            height=100,
-            key="super_text_input",
-        )
-    else:
-        history_texts = session_manager.get_unique_texts()
-        if history_texts:
-            selected_history = st.selectbox(
-                "Pilih teks dari history:",
-                options=range(len(history_texts)),
-                format_func=lambda index: (
-                    f"[{history_texts[index]['algorithm']}] "
-                    f"{history_texts[index]['text'][:50]}"
-                    f"{'...' if len(history_texts[index]['text']) > 50 else ''}"
-                ),
-                key="super_history_selection",
-            )
-            text_input = history_texts[selected_history]["text"]
-            st.text_area("Teks terpilih:", value=text_input, height=100, disabled=True)
-        else:
-            st.info("Belum ada history. Silakan gunakan Input Manual.")
-            text_input = ""
 
     st.markdown("---")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.markdown("#### 🔑 Kunci Utama (Master Key)")
+        st.markdown("#### Kunci utama")
         master_key = st.text_input(
             "Satu kunci untuk semua algoritma:",
             value="KRIPTO2026",
@@ -286,7 +291,7 @@ else:
             st.markdown(
                 f"""
                 <div class="key-preview-box">
-                <b>🔧 Kunci turunan otomatis:</b><br>
+                <b>Kunci turunan</b><br>
                 • Caesar &nbsp;&nbsp;: <code>{k_caesar}</code><br>
                 • Rail Fence : <code>{k_rail}</code> rail<br>
                 • Vernam &nbsp;&nbsp;: <code>{k_vernam}</code><br>
@@ -296,10 +301,10 @@ else:
                 unsafe_allow_html=True,
             )
         else:
-            st.warning("⚠️ Kunci utama belum diisi.")
+            st.warning("Kunci utama belum diisi.")
 
     with col2:
-        st.markdown("#### 🔀 Urutan Eksekusi Algoritma")
+        st.markdown("#### Urutan algoritma")
 
         def _reset_algo_order():
             st.session_state["super_algo_order"] = []
@@ -331,13 +336,13 @@ else:
             # mengubah session_state (tidak seperti mengubahnya sesudah
             # widget dengan key yang sama sudah dibuat di run yang sama).
             st.button(
-                "🗑️ Kosongkan",
+                "Kosongkan",
                 width="stretch",
                 on_click=_reset_algo_order,
             )
         with col_default:
             st.button(
-                "↩️ Urutan Bawaan",
+                "Urutan bawaan",
                 width="stretch",
                 on_click=_default_algo_order,
             )
@@ -368,29 +373,22 @@ else:
                 f"**Urutan Dekripsi:**<br>{chips_dec}", unsafe_allow_html=True
             )
         else:
-            st.warning("⚠️ Pilih minimal 1 algoritma untuk urutan eksekusi.")
+            st.warning("Pilih minimal satu algoritma untuk urutan eksekusi.")
 
     st.markdown("---")
 
     btn_super = st.button(
-        f"[ PROSES SUPER {mode.upper()} ]",
+        f"Proses Super {mode}",
         type="primary",
         disabled=not (algo_order and master_key),
     )
 
     st.markdown("---")
-    st.subheader("📊 PROSES DETAIL ALGORITMA BERANTAI (Langkah demi Langkah)")
+    st.subheader("Langkah proses berantai")
 
     if btn_super and text_input and master_key and algo_order:
         result_super, logs_super = super_enkripsi.process(
             text_input, master_key, algo_order, mode
-        )
-        session_manager.add_to_history(
-            text=text_input,
-            algorithm="Super Enkripsi",
-            mode=mode,
-            key=f"{master_key} | {' → '.join(algo_order)}",
-            result=result_super,
         )
 
         intro_logs = []
@@ -403,12 +401,12 @@ else:
             if isinstance(log, dict) and "rail_fence_process_data" in log:
                 if current_stage_title is not None:
                     current_stage_logs.append(log)
-            elif log.startswith("--- **TAHAP "):
+            elif log.startswith("--- **Tahap "):
                 if current_stage_title is not None:
                     stage_logs.append((current_stage_title, current_stage_logs))
                 current_stage_title = log.removeprefix("--- **").removesuffix("** ---")
                 current_stage_logs = []
-            elif log.startswith("--- **PROSES SUPER-ENKRIPSI SELESAI** ---"):
+            elif log.startswith("--- **Proses super enkripsi selesai** ---"):
                 if current_stage_title is not None:
                     stage_logs.append((current_stage_title, current_stage_logs))
                     current_stage_title = None
@@ -425,7 +423,7 @@ else:
         if current_stage_title is not None:
             stage_logs.append((current_stage_title, current_stage_logs))
 
-        with st.container():
+        with st.container(border=True):
             for log in intro_logs:
                 st.markdown(log, unsafe_allow_html=True)
 
@@ -439,7 +437,7 @@ else:
 
                             for step_index, step in enumerate(process_data["steps"], 1):
                                 with st.expander(
-                                    f"▶ {step['title']}",
+                                    step["title"],
                                     expanded=(step_index == 1),
                                 ):
                                     if step["description"]:
@@ -461,9 +459,9 @@ else:
         if not text_input:
             st.info("Tekan tombol proses untuk melihat visualisasi proses berantai.")
         elif not master_key:
-            st.warning("⚠️ Isi kunci utama terlebih dahulu.")
+            st.warning("Isi kunci utama terlebih dahulu.")
         elif not algo_order:
-            st.warning("⚠️ Pilih minimal 1 algoritma untuk urutan eksekusi.")
+            st.warning("Pilih minimal satu algoritma untuk urutan eksekusi.")
         result_super = "Hasil super enkripsi akan tampil di sini..."
 
     st.markdown(f"### {output_label}")

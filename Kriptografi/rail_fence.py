@@ -209,12 +209,12 @@ def process(text, rails, mode):
     
     if mode == "Enkripsi":
         # Pengantar
-        intro = f"""📝 **Plaintext Asli:** `{text}`
-🔑 **Jumlah Rail:** `{rails}`
-✏️ **Teks Setelah Normalisasi:** `{normalized_text}`"""
+        intro = f"""**Plaintext asli:** `{text}`
+    **Jumlah rail:** `{rails}`
+    **Teks setelah normalisasi:** `{normalized_text}`"""
         
         # ===== STEP 1: Pola Penulisan Zigzag =====
-        step1_title = "📊 STEP 1: Pola Penulisan Zigzag"
+        step1_title = "Langkah 1: Pola penulisan zigzag"
         step1_desc = "Karakter ditulis secara zigzag dengan arah naik-turun pada setiap kolom"
         
         grid_df = create_grid_visualization(text, rails, "encryption")
@@ -227,7 +227,7 @@ def process(text, rails, mode):
         })
         
         # ===== STEP 2: Pembacaan per Rail =====
-        step2_title = "🔐 STEP 2: Pembacaan Karakter per Rail"
+        step2_title = "Langkah 2: Pembacaan karakter per rail"
         step2_desc = "Ciphertext dibentuk dengan membaca setiap rail dari kiri ke kanan"
         
         fence = [[] for _ in range(rails)]
@@ -259,7 +259,7 @@ def process(text, rails, mode):
         
         # ===== STEP 3: Hasil Akhir =====
         result = encrypt(text, rails)
-        step3_title = "✅ STEP 3: Hasil Akhir"
+        step3_title = "Langkah 3: Hasil akhir"
         concatenated = " + ".join(["".join(row) for row in fence])
         step3_content = [
             f"**Penggabungan Rail:** {concatenated}",
@@ -275,15 +275,15 @@ def process(text, rails, mode):
         
     else:  # Dekripsi
         # Pengantar
-        intro = f"""🔓 **Ciphertext Input:** `{text}`
-🔑 **Jumlah Rail:** `{rails}`
+        intro = f"""**Ciphertext input:** `{text}`
+    **Jumlah rail:** `{rails}`
 
 Untuk mendekripsi, kita perlu merekonstruksi grid zigzag dari ciphertext, kemudian membaca ulang sesuai pola zigzag."""
         
         text_len = len(text)
         
         # ===== STEP 1: Hitung dan Rekonstruksi =====
-        step1_title = "📊 STEP 1: Hitung Karakter per Rail & Rekonstruksi Grid"
+        step1_title = "Langkah 1: Hitung karakter per rail dan rekonstruksi grid"
         step1_desc = "Hitung berapa karakter di setiap rail, distribusikan ciphertext, dan masukkan ke grid"
         
         fence_len = [0] * rails
@@ -333,7 +333,7 @@ Untuk mendekripsi, kita perlu merekonstruksi grid zigzag dari ciphertext, kemudi
         })
         
         # ===== STEP 2: Pembacaan Plaintext =====
-        step2_title = "📖 STEP 2: Baca Grid Sesuai Pola Zigzag"
+        step2_title = "Langkah 2: Baca grid sesuai pola zigzag"
         step2_desc = "Membaca grid dengan mengikuti pola zigzag yang sama saat enkripsi"
         
         step2_content = []
@@ -372,7 +372,7 @@ Untuk mendekripsi, kita perlu merekonstruksi grid zigzag dari ciphertext, kemudi
         })
         
         # ===== STEP 3: Hasil Akhir =====
-        step3_title = "✅ STEP 3: Hasil Akhir"
+        step3_title = "Langkah 3: Hasil akhir"
         step3_content = [f"**Plaintext:** `{result}`"]
         
         steps.append({
