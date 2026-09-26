@@ -151,8 +151,11 @@ if menu != "Super Enkripsi":
                         if step['content']:
                             for content in step['content']:
                                 st.write(content)
+            elif "Blowfish" in menu:
+                for log in logs:
+                    st.markdown(log, unsafe_allow_html=True)
             else:
-                # Untuk algoritma lain (Caesar, Vernam, Blowfish)
+                # Untuk algoritma lain (Caesar, Vernam)
                 for log in logs:
                     st.write(log)
             
