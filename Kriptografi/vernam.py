@@ -9,11 +9,29 @@ def process(text, key, mode):
     if not key:
         return "Error: Kunci tidak boleh kosong!", ["⚠️ KUNCI TIDAK BOLEH KOSONG! Masukkan kunci teks."]
 
+    if mode == "Dekripsi":
+        if any(char.isspace() for char in text):
+            hex_blocks = text.split()
+        else:
+            compact_text = text.strip()
+            if len(compact_text) % 2:
+                return "Error: Ciphertext HEX tidak lengkap!", [
+                    "⚠️ Ciphertext tanpa spasi harus berisi pasangan HEX lengkap (2 digit per blok)."
+                ]
+            hex_blocks = [
+                compact_text[index:index + 2]
+                for index in range(0, len(compact_text), 2)
+            ]
+        data_length = len(hex_blocks)
+    else:
+        hex_blocks = []
+        data_length = len(text)
+
     logs.append(f"**MODE {mode.upper()}** | Vernam Cipher (One-Time Pad)")
     
     # Penyelarasan panjang kunci dengan panjang teks
-    extended_key = (key * (len(text) // len(key) + 1))[:len(text)]
-    if len(key) < len(text):
+    extended_key = (key * (data_length // len(key) + 1))[:data_length]
+    if len(key) < data_length:
         logs.append("*Catatan: Panjang kunci lebih pendek dari teks, kunci otomatis diulang.*")
         
     logs.append(f"Kunci yang dipakai : {extended_key}")
@@ -54,8 +72,15 @@ def process(text, key, mode):
         final_result = " ".join(result_chars)
 
     else:
-        # MODE DEKRIPSI 
-        hex_blocks = text.split()
+        # Ciphertext tanpa pemisah dibaca sebagai blok HEX dua digit.
+        if not any(char.isspace() for char in text):
+            logs.append(
+                "*Ciphertext tanpa spasi dibaca per 2 digit HEX. Ini sesuai "
+                "untuk input ASCII; pertahankan pemisah jika mengenkripsi "
+                "karakter non-ASCII.*"
+            )
+
+        # MODE DEKRIPSI
         for i, h in enumerate(hex_blocks):
             if i >= len(extended_key):
                 break
