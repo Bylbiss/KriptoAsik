@@ -1,3 +1,14 @@
+import random
+import string
+
+def generate_otp_key(length):
+    """
+    Menghasilkan kunci acak sepanjang teks (Prinsip Sejati One-Time Pad).
+    """
+    characters = string.ascii_letters + string.digits
+    return "".join(random.choice(characters) for _ in range(length))
+
+
 def process(text, key, mode):
     """
     Modul Pemroses Vernam Cipher / One-Time Pad (OTP)
@@ -7,7 +18,7 @@ def process(text, key, mode):
     
     # Validasi input kunci
     if not key:
-        return "Error: Kunci tidak boleh kosong!", ["Kunci tidak boleh kosong. Masukkan kunci teks."]
+        return "Error: Kunci tidak boleh kosong!", ["KUNCI TIDAK BOLEH KOSONG! Masukkan kunci teks."]
 
     if mode == "Dekripsi":
         if any(char.isspace() for char in text):
@@ -111,7 +122,7 @@ def process(text, key, mode):
                 logs.append(block)
             except ValueError:
                 result_chars.append("?")
-                logs.append(f"**Langkah {i+1}: Hex '{h}' tidak valid.**")
+                logs.append(f" **Langkah {i+1}: Hex '{h}' tidak valid!**")
                 
         final_result = "".join(result_chars)
 
